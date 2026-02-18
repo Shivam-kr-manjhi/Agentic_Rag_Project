@@ -3,3 +3,9 @@
  * Running on http://127.0.0.1:8000
 2026-02-18 12:30:38,546 - werkzeug - INFO - [33mPress CTRL+C to quit[0m
 2026-02-18 12:30:38,547 - werkzeug - INFO -  * Restarting with stat
+2026-02-18 12:30:51,765 - chromadb.telemetry.product.posthog - INFO - Anonymized telemetry enabled. See                     https://docs.trychroma.com/telemetry for more information.
+2026-02-18 12:30:52,385 - werkzeug - WARNING -  * Debugger is active!
+2026-02-18 12:30:52,389 - werkzeug - INFO -  * Debugger PIN: 491-985-548
+2026-02-18 12:33:01,321 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-18 12:33:01,733 - httpx - INFO - HTTP Request: POST https://api.groq.com/openai/v1/chat/completions "HTTP/1.1 200 OK"
+2026-02-18 12:33:01,739 - werkzeug - INFO - 127.0.0.1 - - [18/Feb/2026 12:33:01] "POST /chat HTTP/1.1" 200 -
