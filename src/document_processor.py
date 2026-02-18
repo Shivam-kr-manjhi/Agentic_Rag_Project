@@ -97,7 +97,7 @@ class DocumentProcessor:
         self.chroma_client = chromadb.PersistentClient(path=str(CHROMA_DB_DIR))
         # Metadata collection tracks which files have been processed
         self._meta_collection = self.chroma_client.get_or_create_collection(
-            name="__document_meta__"
+            name="document-meta"
         )
 
     def process_all(self) -> List[DocumentInfo]:

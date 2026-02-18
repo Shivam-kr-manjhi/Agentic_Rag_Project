@@ -22,7 +22,7 @@ class AgentWorker:
         self.tools: Dict[str, Tool] = {t.name: t for t in tools}
         self.chroma_client = chromadb.PersistentClient(path=str(CHROMA_DB_DIR))
         self._td_collection = self.chroma_client.get_collection(
-            name="tool_descriptions"
+            name="tool-descriptions"
         )
 
     def select_tools(self, query: str, top_k: int = TOP_K_TOOLS) -> List[Tool]:

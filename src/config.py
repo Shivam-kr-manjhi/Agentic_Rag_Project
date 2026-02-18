@@ -21,7 +21,7 @@ if not GROQ_API_KEY:
 
 # ── Paths ───────────────────────────────────────────────────────────
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = PROJECT_ROOT / "Data"
+DATA_DIR = PROJECT_ROOT / "uploads"
 CHROMA_DB_DIR = PROJECT_ROOT / "chroma_db"
 
 # ── LLM Client (Groq) ──────────────────────────────────────────────
@@ -45,7 +45,7 @@ def llm_chat(prompt: str, system_prompt: str = "You are a helpful assistant.") -
 
 
 # ── Embedding Model (local SentenceTransformer) ────────────────────
-EMBEDDING_MODEL_NAME = "BAAI/bge-small-en-v1.5"
+EMBEDDING_MODEL_NAME = 'sentence-transformers/all-MiniLM-L6-v2'
 
 print(f"[Config] Loading embedding model: {EMBEDDING_MODEL_NAME} ...")
 embed_model = SentenceTransformer(EMBEDDING_MODEL_NAME)

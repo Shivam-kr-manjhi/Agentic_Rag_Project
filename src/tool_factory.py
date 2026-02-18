@@ -127,12 +127,11 @@ class ToolFactory:
 
     def _persist_tool_descriptions(self, tools: List[Tool]) -> None:
         """Embed and store all tool descriptions in ChromaDB for semantic lookup."""
-        # Recreate the collection fresh each time tools are built
-        try:
-            self.chroma_client.delete_collection(name="tool_descriptions")
-        except Exception:
-            pass
-        td_collection = self.chroma_client.create_collection(name="tool_descriptions")
+        # Use get_or_create + upsert to avoid HNSW index flush race conditions
+        # that cause intermittent "Nothing found on disk" errors
+        td_collection = self.chroma_client.get_or_create_collection(
+            name="tool-descriptions"
+        )
 
         names = [t.name for t in tools]
         descriptions = [t.description for t in tools]
@@ -142,7 +141,7 @@ class ToolFactory:
             for t in tools
         ]
 
-        td_collection.add(
+        td_collection.upsert(
             ids=names,
             documents=descriptions,
             embeddings=embeddings,
