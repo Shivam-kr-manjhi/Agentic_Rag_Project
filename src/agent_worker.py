@@ -25,22 +25,30 @@ class AgentWorker:
             name="tool-descriptions"
         )
 
-    def select_tools(self, query: str, top_k: int = TOP_K_TOOLS) -> List[Tool]:
+    def select_tools(self, query: str, top_k: int = TOP_K_TOOLS, allowed_docs: List[str] = None) -> List[Tool]:
         """
         Embed the query and find the top-K tools whose descriptions
         are most semantically similar.
 
-        Returns a list of Tool objects sorted by relevance.
+        If allowed_docs is provided, only search within those documents.
         """
         query_embedding = embed_model.encode([query]).tolist()
 
-        # Clamp top_k to total available tools
-        available = self._td_collection.count()
-        k = min(top_k, available)
+        # Build metadata filter if specific docs are requested
+        where_filter = {}
+        if allowed_docs:
+            print(f"[Worker] Filtering by docs: {allowed_docs}")
+            # ChromaDB $in operator for matching one of multiple values
+            where_filter = {"document_name": {"$in": allowed_docs}}
+
+        # Clamp top_k to total available tools (or count with filter if possible)
+        # Note: count() doesn't accept filters, so we just ask for top_k and let Chroma handle it
+        k = top_k 
 
         results = self._td_collection.query(
             query_embeddings=query_embedding,
             n_results=k,
+            where=where_filter if where_filter else None,
         )
 
         selected: List[Tool] = []

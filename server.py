@@ -18,6 +18,21 @@ from src.document_processor import DocumentProcessor
 from src.tool_factory import ToolFactory
 from src.agent_worker import AgentWorker
 from src.agent_runner import AgentRunner
+import logging
+
+# Redirect stdout/stderr to file for debugging
+# sys.stdout = open("server.log", "w", encoding="utf-8")
+# sys.stderr = sys.stdout
+
+# Configure logging
+logging.basicConfig(
+    filename='server.log',
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+# Also add a stream handler to print to console so we don't lose it entirely if needed
+# logging.getLogger().addHandler(logging.StreamHandler(sys.stdout))
+
 
 app = Flask(__name__)
 CORS(app)
@@ -43,9 +58,9 @@ runner = AgentRunner(worker)
 
 # ─── Hardcoded AI reply ───────────────────────────────────────────────────────
 
-def get_bot_reply(message):
+def get_bot_reply(message, docs=None):
     query = message
-    answer = runner.run(query)
+    answer = runner.run(query, allowed_docs=docs)
     return f"{answer}"
 
 # ─── POST /chat ───────────────────────────────────────────────────────────────
@@ -63,7 +78,14 @@ def chat():
     print(f"[chat] message: {message}")
     print(f"[chat] active docs: {docs}")
 
-    reply = get_bot_reply(message)
+    # If docs is empty list, treat as None (all docs) or empty? 
+    # Usually empty selection means "all" in some UIs, or "none" in others. 
+    # Based on user request "only provide documents tool amoungst tehm only", 
+    # if the user selects nothing, maybe they want to search everything?
+    # Let's assume if docs is empty, we pass None to let the agent decide (which currently defaults to all).
+    # However, if the UI explicitly sends [], it might mean "no constraints".
+    
+    reply = get_bot_reply(message, docs=docs if docs else None)
     return jsonify({"reply": reply, "docs_used": docs})
 
 

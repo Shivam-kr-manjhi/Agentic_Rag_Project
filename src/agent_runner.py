@@ -43,7 +43,8 @@ RULES:
 3. Choose the most relevant tool. Use vector tools for specific facts and \
 summary tools for overviews.
 4. Do NOT call a tool you have already called in a previous step.
-5. Your answer should be thorough and directly address the question.\
+5. Your answer must be based ONLY on the Retrieved Information. Do NOT use outside knowledge.
+6. If the provided tools do not contain the answer, simply state that you cannot find the information in the selected documents.\
 """
 
 
@@ -53,14 +54,17 @@ class AgentRunner:
     def __init__(self, worker: AgentWorker):
         self.worker = worker
 
-    def run(self, query: str) -> str:
+    def run(self, query: str, allowed_docs: List[str] = None) -> str:
         """
         Execute the full agentic pipeline for a given query.
-
+        
+        allowed_docs: Optional list of document names to filter tools by.
+        
         Returns the final answer string.
         """
+        print(f"[Runner] received allowed_docs: {allowed_docs}")
         # ── Step 1: Tool Selection ──────────────────────────────────
-        selected_tools = self.worker.select_tools(query)
+        selected_tools = self.worker.select_tools(query, allowed_docs=allowed_docs)
         if not selected_tools:
             return "I couldn't find any relevant knowledge sources for your query."
 
